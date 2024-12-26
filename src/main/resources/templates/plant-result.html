@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Plant Identification Results</title>
+    <style>
+      :root {
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --secondary: #ffc107;
+        --text: #2c3e50;
+        --light: #ecf0f1;
+        --white: #ffffff;
+        --gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+      }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f5f5f5;
+      }
+
+      /* Modern Header */
+      .header-logo {
+        position: fixed;
+        width: 100%;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        top: 0;
+      }
+
+      .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-link {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        position: relative;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background: var(--primary);
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .result-container {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+      }
+
+      .suggestion-card {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 4px solid #4caf50;
+      }
+
+      .probability-bar {
+        background: #e0e0e0;
+        height: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 10px 0;
+      }
+
+      .probability-fill {
+        height: 100%;
+        background: #4caf50;
+        transition: width 0.3s ease;
+      }
+
+      .meta-info {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+      }
+
+      .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 20px;
+      }
+
+      .back-button:hover {
+        background-color: #45a049;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+
+      .status-completed {
+        background-color: #dff0d8;
+        color: #3c763d;
+      }
+
+      .image-preview {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .center-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding-top: 80px; /* Space for the header */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header-logo">
+      <div class="header-container">
+        <a href="/" class="logo">
+          <i class="fas fa-leaf"></i>
+          Krishi Care
+        </a>
+        <nav class="nav">
+          <a href="/#features" class="nav-link">Features</a>
+          <a href="/#testimonials" class="nav-link">Testimonials</a>
+          <a href="/auth/logout" class="nav-link">Log Out</a>
+        </nav>
+      </div>
+    </header>
+    <div class="center-wrapper">
+      <div class="result-container">
+        <div class="header">
+          <h1>Plant Identification Results</h1>
+          <span
+            th:if="${result.status == 'COMPLETED'}"
+            class="status-badge status-completed"
+          >
+            ✓ Analysis Complete
+          </span>
+        </div>
+
+        <img
+          th:if="${result.input.images[0]}"
+          th:src="${result.input.images[0]}"
+          class="image-preview"
+          alt="Analyzed plant image"
+        />
+
+        <div th:if="${result.result.classification.suggestions}">
+          <h2>Possible Matches</h2>
+
+          <div
+            th:each="suggestion, iterStat : ${result.result.classification.suggestions}"
+            class="suggestion-card"
+          >
+            <h3 th:text="${iterStat.count + '. ' + suggestion.name}">
+              Plant Name
+            </h3>
+
+            <div class="probability-bar">
+              <div
+                class="probability-fill"
+                th:style="'width: ' + ${suggestion.probability * 100} + '%'"
+              ></div>
+            </div>
+            <p>
+              Confidence:
+              <span
+                th:text="${#numbers.formatDecimal(suggestion.probability * 100, 1, 1) + '%'}"
+              >
+                0%
+              </span>
+            </p>
+            <p th:if="${suggestion.details.entity_id}" class="small">
+              ID: <span th:text="${suggestion.details.entity_id}"></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="meta-info">
+          <p>
+            <strong>Model Version:</strong>
+            <span th:text="${result.model_version}">version</span>
+          </p>
+          <p>
+            <strong>Analysis Date:</strong>
+            <span
+              th:text="${#dates.format(new java.util.Date(result.created * 1000), 'yyyy-MM-dd HH:mm:ss')}"
+            >
+              date
+            </span>
+          </p>
+          <p>
+            <strong>Analysis Duration:</strong>
+            <span
+              th:text="${#numbers.formatDecimal(result.completed - result.created, 1, 3) + ' seconds'}"
+            >
+              duration
+            </span>
+          </p>
+        </div>
+
+        <a href="/plant/identify" class="back-button">← New Identification</a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plant Identification</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --secondary: #ffc107;
+        --text: #2c3e50;
+        --light: #ecf0f1;
+        --white: #ffffff;
+        --gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+      }
+
+      /* Modern Header */
+      .header {
+        position: fixed;
+        width: 100%;
+        padding: 1rem 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        top: 0;
+        width: 100%;
+      }
+
+      .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-link {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        position: relative;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background: var(--primary);
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 95px auto;
+      }
+
+      .header-identity {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .header-identity h1 {
+        color: #2e7d32;
+        font-size: 2.5em;
+        margin-bottom: 15px;
+      }
+
+      .header-identity p {
+        color: #666;
+        font-size: 1.1em;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .upload-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .upload-area {
+        border: 3px dashed #e0e0e0;
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        background: #f8f9fa;
+      }
+
+      .upload-area.dragover {
+        border-color: #2e7d32;
+        background: rgba(46, 125, 50, 0.1);
+      }
+
+      .upload-area i {
+        font-size: 3em;
+        color: #2e7d32;
+        margin-bottom: 15px;
+      }
+
+      .upload-area h3 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .upload-area p {
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .upload-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #2e7d32;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .upload-btn i {
+        color: white;
+      }
+
+      .upload-btn:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+      }
+
+      .preview-container {
+        margin-top: 20px;
+        display: none;
+      }
+      .preview-image {
+        max-width: 300px;
+        max-height: 300px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+
+      .result-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+      }
+
+      .result-container h2 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+      }
+
+      .plant-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .info-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #2e7d32;
+      }
+
+      .info-card h3 {
+        color: #2e7d32;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .info-card p {
+        color: #666;
+        line-height: 1.5;
+      }
+
+      .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .loading i {
+        color: #2e7d32;
+        font-size: 2em;
+        animation: spin 1s linear infinite;
+      }
+
+      .preview-image-parent {
+        display: flex;
+        justify-content: center; /* Centers horizontally */
+        align-items: center; /* Centers vertically */
+      }
+
+      .nested-preview {
+        text-align: center; /* Centers the image and button */
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .upload-container {
+          padding: 20px;
+        }
+
+        .upload-area {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-container">
+        <a href="/" class="logo">
+          <i class="fas fa-leaf"></i>
+          Krishi Care
+        </a>
+        <nav class="nav">
+          <a href="/#features" class="nav-link">Features</a>
+          <a href="/#testimonials" class="nav-link">Testimonials</a>
+          <a href="/auth/logout" class="nav-link">Log Out</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="header-identity">
+        <h1>Plant Identification</h1>
+        <p>
+          Upload a photo of any plant and get instant identification with
+          detailed information about species, care instructions, and more.
+        </p>
+      </div>
+
+      <div class="upload-container">
+        <div th:if="${error}" class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <p th:text="${error}"></p>
+        </div>
+
+        <form id="uploadForm" action="/plant/identify" method="POST">
+          <div class="upload-area" id="dropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Drag & Drop your plant image</h3>
+            <p>or</p>
+            <button
+              type="button"
+              class="upload-btn"
+              onclick="triggerFileInput()"
+            >
+              <i class="fas fa-camera"></i>
+              Choose Image
+            </button>
+            <input
+              type="file"
+              id="plantData"
+              class="file-input"
+              accept="image/*"
+              required
+            />
+            <input type="hidden" id="imageBlob" name="imageBlob" />
+          </div>
+
+          <div class="preview-container" id="previewContainer">
+            <div class="preview-image-parent">
+              <div class="nested-preview">
+                <img
+                  id="imagePreview"
+                  class="preview-image"
+                  src=""
+                  alt="Preview"
+                />
+                <div>
+                  <button
+                    type="button"
+                    class="upload-btn"
+                    onclick="submitForm()"
+                  >
+                    <i class="fas fa-search"></i>
+                    Identify Plant
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="loading" id="loadingIndicator">
+          <i class="fas fa-spinner"></i>
+          <p>Analyzing your plant...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const dropZone = document.getElementById("dropZone");
+      const fileInput = document.getElementById("plantData");
+      const previewContainer = document.getElementById("previewContainer");
+      const imagePreview = document.getElementById("imagePreview");
+      const loadingIndicator = document.getElementById("loadingIndicator");
+
+      // Drag and drop handlers
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+      });
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+
+      dropZone.addEventListener("drop", handleDrop, false);
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function highlight(e) {
+        dropZone.classList.add("dragover");
+      }
+
+      function unhighlight(e) {
+        dropZone.classList.remove("dragover");
+      }
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+      }
+
+      function triggerFileInput() {
+        fileInput.click();
+      }
+
+      fileInput.addEventListener("change", function () {
+        handleFiles(this.files);
+      });
+
+      function handleFiles(files) {
+        if (files.length > 0) {
+          const file = files[0];
+          if (file.type.startsWith("image/")) {
+            displayPreview(file);
+          } else {
+            alert("Please upload an image file");
+          }
+        }
+      }
+
+      function displayPreview(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.src = e.target.result;
+          previewContainer.style.display = "block";
+          dropZone.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function submitForm() {
+        const file = fileInput.files[0];
+        if (!file) {
+          alert("Please select an image file");
+          return;
+        }
+
+        loadingIndicator.style.display = "block";
+        previewContainer.style.display = "none";
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const base64String = e.target.result.split(",")[1];
+          document.getElementById("imageBlob").value = base64String;
+          document.getElementById("uploadForm").submit();
+        };
+        reader.readAsDataURL(file);
+      }
+    </script>
+  </body>
+</html>

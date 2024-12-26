@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Plant Identification System</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+      }
+
+      .page-container {
+        display: flex;
+        max-width: 1000px;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      .register-image {
+        flex: 1;
+        background: linear-gradient(
+            rgba(34, 139, 34, 0.8),
+            rgba(34, 139, 34, 0.9)
+          ),
+          url("/api/placeholder/600/800");
+        background-size: cover;
+        background-position: center;
+        padding: 40px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .register-image h1 {
+        font-size: 2.5em;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      .register-image p {
+        font-size: 1.1em;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .benefits {
+        margin-top: auto;
+      }
+
+      .benefits div {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+      }
+
+      .benefits i {
+        margin-right: 10px;
+        font-size: 1.2em;
+      }
+
+      .register-form {
+        flex: 1;
+        padding: 60px 40px;
+        background: white;
+      }
+
+      .form-header {
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      .form-header h2 {
+        color: #2e7d32;
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
+
+      .form-header p {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      .input-group {
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 15px;
+        padding-right: 40px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+      }
+
+      .input-group input:focus {
+        border-color: #2e7d32;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+      }
+
+      .input-group i {
+        position: absolute;
+        right: 15px;
+        top: 45px;
+        color: #666;
+        cursor: pointer;
+      }
+
+      .password-requirements {
+        font-size: 0.85em;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .password-requirements ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .password-requirements li {
+        margin: 3px 0;
+      }
+
+      .password-requirements i {
+        margin-right: 5px;
+        font-size: 0.9em;
+      }
+
+      button {
+        width: 100%;
+        padding: 15px;
+        background: #2e7d32;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      button:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+      }
+
+      .form-footer {
+        margin-top: 30px;
+        text-align: center;
+        color: #666;
+      }
+
+      .form-footer a {
+        color: #2e7d32;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .form-footer a:hover {
+        text-decoration: underline;
+      }
+
+      .social-register {
+        margin-top: 30px;
+        text-align: center;
+      }
+
+      .social-register p {
+        color: #666;
+        margin-bottom: 15px;
+      }
+
+      .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .social-icons a {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .social-icons a:hover {
+        background: #2e7d32;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .terms {
+        margin-top: 20px;
+        font-size: 0.85em;
+        color: #666;
+        text-align: center;
+      }
+
+      .terms a {
+        color: #2e7d32;
+        text-decoration: none;
+      }
+
+      @media (max-width: 768px) {
+        .register-image {
+          display: none;
+        }
+
+        .page-container {
+          max-width: 400px;
+        }
+
+        .register-form {
+          padding: 40px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-container">
+      <div class="register-image">
+        <div>
+          <h1>Join Our Community</h1>
+          <p>
+            Start your journey of plant discovery and connect with plant
+            enthusiasts worldwide
+          </p>
+        </div>
+        <div class="benefits">
+          <div><i class="fas fa-leaf"></i> Instant plant recognition</div>
+          <div><i class="fas fa-database"></i> Extensive plant database</div>
+          <div><i class="fas fa-users"></i> Community support</div>
+        </div>
+      </div>
+
+      <div class="register-form">
+        <div class="form-header">
+          <h2>Create Account</h2>
+          <p>Join our growing community of plant enthusiasts</p>
+        </div>
+
+        <form action="/auth/register" method="POST">
+          <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
+            <i class="fas fa-user"></i>
+          </div>
+
+          <div class="input-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required />
+            <i class="fas fa-envelope"></i>
+          </div>
+
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+          </div>
+
+          <div class="input-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              required
+            />
+          </div>
+
+          <button type="submit">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+        </form>
+
+        <div class="form-footer">
+          <p>Already have an account? <a href="/auth/login">Sign in</a></p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
